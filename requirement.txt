@@ -1,0 +1,38 @@
+# Django for main backend
+django==4.2.5  
+
+# Flask for the secondary backend
+flask==3.0.0  
+
+# Celery for task queue
+celery==5.3.4  
+
+# Redis for Celery broker
+redis==5.0.10  
+
+# Google API client for Gmail integration
+google-api-python-client==2.95.0
+google-auth==2.23.0
+google-auth-oauthlib==1.0.0  
+
+# Hugging Face Transformers for LLM integration
+transformers==4.35.0  
+
+# Job scheduling (e.g., periodic tasks with Celery)
+django-celery-beat==2.5.0  
+
+# Email functionality
+email-validator==2.0.0  
+
+# Other utilities
+requests==2.31.0
+pytz==2023.3
+six==1.16.0  
+
+# Database drivers (PostgreSQL as an example)
+psycopg2-binary==2.9.7  
+
+# Development tools
+black==23.9.1
+isort==5.12.0
+flake8==6.1.0

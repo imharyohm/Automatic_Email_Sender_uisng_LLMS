@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sender Setup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Email Sender Setup</h2>
+        <form action="/submit" method="post" enctype="multipart/form-data">
+            <!-- Google Sheet URL -->
+            <label for="sheet_url">Google Sheet URL:</label>
+            <input type="url" id="sheet_url" name="sheet_url" placeholder="Enter Google Sheet URL">
+            
+            <p>OR</p>
+
+            <!-- CSV File Upload -->
+            <label for="csv_file">Upload CSV File:</label>
+            <input type="file" id="csv_file" name="csv_file" accept=".csv">
+
+            <!-- Email Content -->
+            <label for="email_content">Email Content or Prompt:</label>
+            <textarea id="email_content" name="email_content" rows="5" placeholder="Enter email content with placeholders like {Company Name}, {Location}"></textarea>
+
+            <!-- Schedule Time -->
+            <label for="schedule_time">Schedule Time (in seconds):</label>
+            <input type="number" id="schedule_time" name="schedule_time" placeholder="Enter delay in seconds" min="0" required>
+            <!-- Submit Button -->
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

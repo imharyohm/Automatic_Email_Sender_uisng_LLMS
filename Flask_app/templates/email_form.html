@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Status Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+
+</head>
+<body>
+
+<h1>Email Status Dashboard</h1>
+
+<!-- Table displaying email statuses -->
+<h2>Email Status</h2>
+<table id="emailTable" border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th>Company Name</th>
+            <th>Email Status</th>
+            <th>Delivery Status</th>
+            <th>Opened</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data will be dynamically inserted here using JavaScript -->
+    </tbody>
+</table>
+
+<!-- Progress Bar showing email sending progress -->
+<h3>Email Sending Progress</h3>
+<progress id="emailProgressBar" value="0" max="100" style="width: 100%;"></progress>
+
+<!-- Optional: Chart.js to visualize progress or other metrics -->
+<h3>Email Status Overview</h3>
+<canvas id="emailStatusChart" width="400" height="200"></canvas>
+
+<script>
+// Function to update the email status table
+function updateEmailStatusTable() {
+    $.ajax({
+        url: '/api/email-status/',  // API endpoint to get email status
+        type: 'GET',
+        success: function(data) {
+            const emailData = data.emails;
+            let tableContent = '';
+            emailData.forEach(email => {
+                tableContent += `
+                    <tr>
+                        <td>${email.company_name}</td>
+                        <td>${email.email_status}</td>
+                        <td>${email.delivery_status || 'N/A'}</td>
+                        <td>${email.opened ? 'Yes' : 'No'}</td>
+                    </tr>
+                `;
+            });
+            $('#emailTable tbody').html(tableContent);
+        },
+        error: function(error) {
+            console.log('Error fetching email status:', error);
+        }
+    });
+}
+
+// Function to update email sending progress
+function updateEmailProgress() {
+    $.ajax({
+        url: '/api/email-status/',  // API endpoint to get email status count
+        type: 'GET',
+        success: function(data) {
+            const totalEmails = data.emails.length;
+            const sentEmails = data.emails.filter(email => email.email_status === 'sent').length;
+            const progress = (sentEmails / totalEmails) * 100;
+            $('#emailProgressBar').val(progress);
+        },
+        error: function(error) {
+            console.log('Error fetching progress:', error);
+        }
+    });
+}
+
+// Function to generate a chart showing email status overview
+function generateEmailStatusChart() {
+    $.ajax({
+        url: '/api/email-status/',  // API endpoint to get email status count
+        type: 'GET',
+        success: function(data) {
+            const emailData = data.emails;
+            const statusCounts = {
+                sent: 0,
+                scheduled: 0,
+                pending: 0,
+                failed: 0
+            };
+            emailData.forEach(email => {
+                statusCounts[email.email_status]++;
+            });
+
+            const ctx = document.getElementById('emailStatusChart').getContext('2d');
+            const emailStatusChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Sent', 'Scheduled', 'Pending', 'Failed'],
+                    datasets: [{
+                        label: 'Email Status',
+                        data: [statusCounts.sent, statusCounts.scheduled, statusCounts.pending, statusCounts.failed],
+                        backgroundColor: ['green', 'blue', 'orange', 'red']
+                    }]
+                }
+            });
+        },
+        error: function(error) {
+            console.log('Error generating email status chart:', error);
+        }
+    });
+}
+
+// Initial page load
+$(document).ready(function() {
+    updateEmailStatusTable();
+    setInterval(updateEmailStatusTable, 5000);  // Update every 5 seconds
+
+    updateEmailProgress();
+    setInterval(updateEmailProgress, 5000);  // Update progress every 5 seconds
+
+    generateEmailStatusChart();  // Generate chart on page load
+});
+
+// Optional: WebSocket for real-time updates (if using Channels)
+const socket = new WebSocket('ws://yourdomain.com/ws/email-status/');
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    updateEmailStatusTable();  // Update the table with new data
+    updateEmailProgress();  // Update the progress bar
+};
+</script>
+
+</body>
+</html>
