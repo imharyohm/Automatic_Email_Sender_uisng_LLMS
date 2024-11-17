@@ -87,20 +87,4 @@ def send_scheduled_emails(email_template, schedule_time, data_rows):
         print(f"Error in sending scheduled emails: {str(e)}")
 
 
-# def generate_email_content_with_llm(template, row_data):
-#     """
-#     Generates personalized email content using Hugging Face's LLM.
 
-#     Args:
-#         template (str): The email template with placeholders.
-#         row_data (dict): Data to fill in the placeholders.
-
-#     Returns:
-#         str: The generated email content.
-#     """
-#     # Fill in the template with row data
-#     filled_template = template.format(**row_data)
-    
-#     # Generate content using the LLM
-#     generated_content = generator(filled_template, max_length=200, num_return_sequences=1)
-#     return generated_content[0]['generated_text']
